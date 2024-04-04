@@ -1,0 +1,140 @@
+// Análisis de datos con Pandas
+// Paso 1: Cargar el conjunto de datos(dataset) 
+import os
+import glob
+import pandas as pd
+import numpy as np
+path ="/work"
+os.chdir(path) #Current working directory that contains your dataset and code file
+
+#EL NOMBRE DEL ARCHIVO CSV DEBE SER EL QUE SE PROCESO Y SUBIO  Ejemplo ventas_sucursales_puebla.csv
+df = pd.read_csv('ventas_sucursales_quintanaroo.csv')
+
+// Paso 2 - Exploración de datos
+// El conjunto de datos se exploró utilizando algunas funciones integradas de pandas como: Numpy para realizar cálculos numéricos, pandas para hacer que un objeto de dataframe seaborn y matplotlib para visualizaciones. El  .head() para ver las primeras observaciones del marco de datos y  .info() para obtener información sobre el dataframe.
+# Importar Librerias para graficación
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+plt.style.use('fivethirtyeight')  
+import warnings
+warnings.filterwarnings('ignore')
+
+df.head(12)
+
+#Verifique la cantidad de filas y columnas presentes en los datos usando el atributo shape.
+df.shape 
+
+#hay valores faltantes
+df.isna().sum()
+
+# Ver el nombre de las columnas usando el atributo columns
+df.columns
+
+df.info()
+
+#Concentrado de estadísticos
+df.describe()
+
+// Paso 3: Manejar funciones de fecha y hora
+# En inglés Cogs se refiere al costo de los bienes vendidos
+import datetime as dt                     #Importing our datetime module
+df["Fecha"] = pd.to_datetime(df["Fecha"])   # Extracting the Dates
+df.dtypes
+
+df["Hora_Pago"] = pd.to_datetime(df["Hora_Pago"])  #Extracting Time
+
+df["Day"] = df["Fecha"].dt.day
+df["Month"] = df["Fecha"].dt.month
+df["Hour"] = df["Hora_Pago"].dt.hour
+df["Year"] = df["Fecha"].dt.year
+
+// Pandas proporciona el método nunique() para obtener un recuento de valores únicos mientras que la función unique() se usa para obtener valores únicos del objeto Series.
+#df["Hour"].nunique()
+#df["Hour"].unique()
+
+df.columns
+
+// Paso 4: valores únicos en columnas
+columnas_categoricas = [col for col in df.columns if df[col].dtype == "object" ]
+columnas_categoricas
+
+df['Sucursal'].unique().tolist()
+
+print("Número total de valores únicos en la columna de Sucursal: {}". format(len(df['Sucursal'].unique().tolist())))
+
+// Se usa un ciclo en python para hacer las otras columnas.
+for i in columnas_categoricas:
+    if i != 'ID_factura':
+        print ("Esto es para Columna {} ".format(i))
+        print (df[i].unique().tolist())
+
+for i in columnas_categoricas:
+    if i != 'Invoice ID':
+        print ("Esto es para {} ".format(i))
+        print ("Número total de valores únicos: {}". format(len(df[i].unique().tolist())))
+
+// Paso 5 - Función de Agregación con GroupBy
+
+# Creación de un objeto groupby para agrupar el conjunto de datos (dataset) según la Sucursal
+by_suc = df.groupby("Sucursal")
+
+# Para obtener la suma y la media de las columnas numéricas excluyendo las columnas de tipo object
+by_suc_numericas = df.select_dtypes(include=[np.number]).groupby(df["Sucursal"])
+by_suc_numericas.agg(["sum", "mean"])
+
+# Usando el objeto groupby para obtener los ingresos brutos de cada sucursal
+Ingreso_bruto = by_suc['Ingreso_bruto'].sum().reset_index()
+Ingreso_bruto
+
+#Obteniendo la Sucursal  con mayor ingreso  bruto
+Ingreso_bruto.max().reset_index()
+
+#Se modificó codigo, agregando los corchetes pendientes para llamar las columnas correspondientes
+suc_with_others = by_suc_numericas[["Cantidad", "Precio_unitario","Porcentaje_margen_bruto"]].sum()
+suc_with_others
+
+#Línea de productos con mayor ingreso bruto
+prod = df[['Linea_producto', 'Ingreso_bruto']]
+prod_group = prod.groupby('Linea_producto').sum().reset_index().sort_values(['Ingreso_bruto'], ascending =False)
+prod_group
+
+// Sucursal con mayor ingreso bruto
+sales_quantity = df[['Sucursal','Cantidad']]
+group = sales_quantity.groupby('Sucursal').count().sort_values(['Cantidad'], ascending =False)
+group
+
+// Paso 6 - Visualización de datos
+sns.countplot(x= 'Sucursal', data = df).set_title("Sucursal  vs Ventas", size = 24);
+
+sns.countplot(x = 'Pago', data = df).set_title('Diferente tipo de pago', size = 24);
+
+sns.countplot(x = 'Sucursal', data = df).set_title('Ventas Vs Sucursal');
+
+sns.countplot(y = 'Linea_producto', data = df).set_title('Ventas por diferente línea de productos');
+
+sns.countplot(y = 'Linea_producto', data = df, hue = 'Pago').set_title('Forma de pago  VS Línea de Producto');
+
+sns.countplot(x = 'Pago', data = df, hue = 'Sucursal').set_title('Forma de Pago Vs Sucursal')
+plt.legend(loc='upper left', bbox_to_anchor=(1.25, 0.5), ncol=1)
+
+sns.boxplot(x = 'Sucursal', y = 'Calificacion', data = df).set_title("Calificación vs Sucursal");
+
+sns.catplot(x = 'Linea_producto', y = 'Cantidad', hue = 'Genero', kind= 'boxen', data = df, aspect = 4);
+
+sns.catplot(y = 'Precio_unitario', x = 'Linea_producto', kind= 'point', data = df, aspect = 4);
+
+sns.catplot(y = 'Cantidad', x = 'Linea_producto', kind= 'point', data = df, aspect = 4);
+
+sns.countplot(x = 'Pago', data = df, hue = 'Genero').set_title("Género vs Forma de Pago");
+
+#Se modificó el tipo de grafica, se puede filtrar por Sucursal, Genero, Linea de producto 
+#En cualquier filtro excede la colmena
+sns.stripplot( x='Sucursal', y='Impuesto', data=df, hue='Sucursal')
+plt.show();
+
+sns.countplot(x = 'Sucursal', hue = 'Genero', data = df).set_title("Genero VS Sucursal");
+
+// Get in: https://deepnote.com/workspace/aaa-936b-fbdc99b2-6f5b-41e8-b4a5-1aed1fad9d3b/project/Analisis-ventas-Quintana-Roo-c3ffbc27-03d0-4490-acd8-bc3e5bb88c63/notebook/Notebook%201-a56d39cbe49d4e8cb98a11170578cd95
