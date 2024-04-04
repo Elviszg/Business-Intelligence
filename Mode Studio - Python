@@ -1,0 +1,661 @@
+--DIRECTIONS: Modify this query so that it counts 
+--the number of rows in the table dsv1069.users
+
+SELECT COUNT(*) 
+FROM dsv1069.users
+
+-- Code 1 
+--Retrieve all the records from the Employees table. What is Robert King's mailing address? Note: You will have to scroll to the right in order to see it.
+Select * 
+From Employees
+where Lastname = 'King' and Firstname ='Robert';
+
+--Retrieve the FirstName, LastName, Birthdate, Address, City, and State from the Employees table. Which of the employees listed below has a birthdate of 3-3-1965?
+Select FirstName
+,LastName
+,Birthdate
+,Address
+,City
+,State
+From Employees
+Where Birthdate = '1965-03-03 00:00:00';
+
+--Retrieve all the columns from the Tracks table, but only return 20 rows.
+Select *
+From Tracks
+Limit 20;
+
+--Find the distinct values for the extended step. The code has been started for you, but you will need to program the third line yourself before running the query.
+SELECT 
+distinct Extended_step
+from salary_range_by_job_classification;
+
+--Excluding $0.00, what is the minimum bi-weekly high rate of pay (please include the dollar sign and decimal point in your answer)? The code has been started for you, but you will need to add onto the last line of code to get the correct answer.
+Select 
+min(Biweekly_high_Rate)
+From salary_range_by_job_classification
+where biweekly_high_rate <> '$0.00'
+
+--What is the maximum biweekly high rate of pay (please include the dollar sign and decimal point in your answer)? The code has been started for you, but you will need to add onto the last line of code to get the correct answer.
+SELECT 
+Max(Biweekly_high_Rate) 
+from salary_range_by_job_classification;
+
+--What is the pay type for all the job codes that start with '03'? The code has been started for you, but you will need to program the fourth and fifth lines yourself before running the query.
+Select
+job_code,
+pay_type
+From salary_range_by_job_classification
+where job_code between '0200' and '0400'
+order by job_code asc;
+
+--Run a query to find the Effective Date (eff_date) or Salary End Date(sal_end_date) for grade Q90H0? The code has been started for you, but you will need to program the third through the sixth lines yourself before running the query. 
+Select
+grade,
+eff_date,
+sal_end_date
+From salary_range_by_job_classification
+where grade = 'Q90H0'
+
+--Sort the Biweekly low rate in ascending order. There is no starter code, as you need to write and run the query on your own. Hint: there are 4 lines to run this query.
+Select
+Biweekly_Low_Rate
+From salary_range_by_job_classification
+Order by Biweekly_Low_Rate asc;
+
+--Write and run a query, with no starter code to answer this question: What Step are Job Codes 0110-0400? Hint: there are 6 lines to run this query.
+Select
+Job_Code
+, step
+From salary_range_by_job_classification
+order by Job_Code asc;
+
+--Write and run a query, with no starter code or hints to answer this question: What is the Biweekly High Rate minus the Biweekly Low Rate for job Code 0170?
+Select 
+job_code
+,Biweekly_High_Rate
+, Biweekly_Low_Rate
+,(Biweekly_High_Rate - Biweekly_Low_Rate) as Result
+From salary_range_by_job_classification;
+
+--Write and run a query, with no starter code or hints to answer this question: What is the Extended Step for Pay Types M, H, and D? 
+Select 
+Extended_Step,
+Pay_Type
+From salary_range_by_job_classification
+Where Pay_Type in ('D','M','H');
+
+--Write and run a query, with no starter code or hints to answer this question: What is the step for Union Code 990 and a Set ID of SFMTA or COMMN?
+Select 
+Step,
+Union_Code
+From salary_range_by_job_classification
+Where Union_Code = 990;
+
+--You are doing an analysis on musicians that start with the letter “K”. Select the correct query that would retrieve only the artists whose name starts with this letter. 
+SELECT name
+FROM Artists
+WHERE name LIKE ‘K%’;
+
+--Find all the tracks that have a length of 5,000,000 milliseconds or more.
+Select *
+From tracks
+where Milliseconds >= 5000000
+
+--Find all the invoices whose total is between $5 and $15 dollars.
+Select *
+From Invoices
+where Total between '5.00' and '15.00'
+
+--Find all the customers from the following States: RJ, DF, AB, BC, CA, WA, NY.
+Select * 
+from customers
+where state IN ('RJ','DF','AB','BC','CA','WA','NY')
+
+--Find all the invoices for customer 56 and 58 where the total was between $1.00 and $5.00.
+Select * 
+from invoices
+where customerid in (56,58) and total between '1.00' and '5.00'
+
+--Find all the tracks whose name starts with 'All'.
+Select * 
+From tracks
+where name like 'All%' 
+
+--Find all the customer emails that start with "J" and are from gmail.com.
+Select *
+From customers
+where Email like 'J%@gmail.com'
+
+--Show the number of orders placed by each customer (hint: this is found in the invoices table) and sort the result by the number of orders in descending order.
+-- Seleccionar los ID de clientes, haz un conteo de cuantos id de clientes hay
+-- agrupalo por id de clientes para saber cuantos de cada uno hay en el conteo. 
+Select 
+Customerid
+,Count (Customerid) AS Conteo
+From invoices
+Group by Customerid
+Order by Customerid DESC
+
+--Find the albums with 12 or more tracks.
+-- Selecciona el Id track y el album ID, haz un conteo de cuantos album id hay en total
+-- agrupa los album id para saber cuandos de cada uno hay 
+Select 
+TrackId
+, AlbumId
+, count (AlbumId) as Conteo
+from tracks
+Group by (AlbumId)
+having Conteo >= 12
+
+--Find all the invoices from the billing city Brasília, Edmonton, and Vancouver and sort in descending order by invoice ID.
+SELECT *
+FROM Invoices
+WHERE BillingCity IN ('Brasília', 'Edmonton','Vancouver ')
+ORDER BY InvoiceId DESC
+
+--Create a list of album titles and the unit prices for the artist "Audioslave".
+Select tracks.unitprice
+,  albums.title
+, artists.name
+From ((albums  INNER JOIN tracks 
+    ON albums.albumid = tracks.albumid)
+    INNER JOIN artists 
+        ON artists.artistId= albums.artistId)
+Where artists.name = ('Audioslave') 
+
+--Find the first and last name of any customer who does not have an invoice. Are there any customers returned from the query?
+Select 
+Customers.lastname
+, invoice_items.quantity
+From ((Customers inner join invoices
+    on customers.customerID = invoices.customerID)
+        INNER JOIN invoice_items
+            on invoices.invoiceId = invoice_items.invoiceId)
+Where quantity = 0; 
+
+--Find the total price for each album.
+Select 
+tracks.UnitPrice 
+, albums.title
+, count(tracks.UnitPrice) 
+, count(tracks.UnitPrice) * tracks.UnitPrice As resultado
+
+From (albums inner join tracks   
+    ON albums.albumid = tracks.albumid)
+Where title = 'Big Ones'
+
+--How many records are created when you apply a Cartesian join to the invoice and invoice items table?
+Select 
+invoices.invoiceID
+From invoices cross join invoice_items;
+
+--Using a subquery, find the names of all the tracks for the album "Californication".
+Select 
+tracks.name
+From tracks
+where tracks.albumid in (Select albums.albumid
+    From albums
+    where albums.title = 'Californication'
+    )
+
+--Find the total number of invoices for each customer along with the customer's full name, city and email.
+Select 
+invoices.total 
+,customers.Firstname
+,customers.Lastname
+,customers.city
+,customers.email
+from invoices inner join customers on customers.customerid = invoices.customerid
+Order by invoices.total ASC
+
+--Retrieve the track name, album, artistID, and trackID for all the albums.
+Select
+tracks.trackID
+,tracks.name
+,albums.title
+,artists.artistId
+From ((tracks inner join albums on albums.albumid = tracks.albumid)
+inner join artists on albums.artistId = artists.artistId)
+
+--Retrieve a list with the managers last name, and the last name of the employees who report to him or her.
+Select 
+employees.employeeID
+,employees.title
+,employees.lastname
+,employees.reportsTo
+from employees
+where employees.reportsTo = 6
+
+--Find the name and ID of the artists who do not have albums. 
+select 
+distinct artists.name
+,albums.albumid
+, artists.artistId
+from artists left join albums 
+ON (albums.artistID = artists.artistId )
+where albums.title is null 
+order by artists.artistId asc
+
+--Use a UNION to create a list of all the employee's and customer's first names and last names ordered by the last name in descending order.
+Select 
+FirstName
+,LastName
+From Customers UNION 
+Select
+FirstName
+,LastName
+From Employees
+Order by LastName DESC
+
+--See if there are any customers who have a different city listed in their billing city versus their customer city.
+select Customers.FirstName,Customers.City,Invoices.BillingCity
+from Customers
+left join Invoices
+on Customers.CustomerId=Invoices.CustomerId
+where Customers.City<>Invoices.BillingCity
+
+--ull a list of customer ids with the customer’s full name, and address, along with combining their city and country together. Be sure to make a space in between these two and make it UPPER CASE. (e.g. LOS ANGELES USA)
+Select
+customerId
+, FirstName 
+, LastName
+, Address 
+, Upper (City || (' ') || (Country) ) as Concatenar
+From Customers
+
+--Create a new employee user id by combining the first 4 letters of the employee’s first name with the first 2 letters of the employee’s last name. Make the new field lower case and pull each individual step to show your work.
+Select 
+employeeId As IDUsuario 
+, Lower (Substr (FirstName, 1,4) || Substr (LastName, 1,2)) As Combinacion
+From employees
+
+--Show a list of employees who have worked for the company for 15 or more years using the current date function. Sort by lastname ascending.
+Select 
+FirstName || (' ') || (LastName) As Empleado
+, LastName
+, HireDate
+, date ('now') - StrfTime ('%Y', HireDate)AS Años_Trabajados
+From Employees
+Order by LastName ASC 
+
+--Profiling the Customers table, answer the following question.
+Select *
+From Customers
+Where (PostalCode is null and fax is null) and PostalCode is null
+
+--Find the cities with the most customers and rank in descending order.
+Select
+CustomerId
+, FirstName
+, City
+, count (city)
+From Customers
+Group by City
+Having count (city) >= 2
+
+--Create a new customer invoice id by combining a customer’s invoice id with their first and last name while ordering your query in the following order: firstname, lastname, and invoiceID.
+Select 
+Customers.FirstName  
+, Customers.LastName
+, Invoices.InvoiceID
+, Customers.FirstName || (Customers.LastName) || (Invoices.InvoiceID) As Combinacion
+From Customers LEFT JOIN Invoices ON Customers.customerID = Invoices.customerID
+Where Customers.FirstName = 'Astrid' 
+
+-- Code 2
+/*Exercise 2:
+--Goal: Use the items table to count the number of items for sale in each category
+Starter Code: (none)*/
+
+SELECT 
+category
+, COUNT(id)
+FROM dsv1069.items
+GROUP BY category
+
+-- Code 3
+/*Exercise 3: Imagine that you need to count item views by day. You found this table
+item_views_by_category_temp - should you use it to answer your questiuon?
+Starter Code:
+SELECT *
+FROM dsv1069.item_views_by_category_temp
+*/
+
+--NO TIENE FECHA ASI QUE NO ES VIABLE FIARSE DE ESTA TABLA
+SELECT 
+category
+,SUM (view_events) AS CONTEO --intente usar count(column) pero solo arroja el numero de filas coincidentes, no suma
+FROM dsv1069.item_views_by_category_temp
+GROUP BY category
+
+-- Code 4: 
+/*
+Exercise 1:
+Create the right subtable for recently viewed events using the view_item_events table.
+
+SELECT 
+user_id
+,item_id
+,event_time
+, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY event_time DESC) AS VIEW_NUM
+FROM dsv1069.view_item_events 
+*/
+/*
+Exercise 2: Check your joins. Join your tables together recent_views, users, items
+Starter Code: The result from Ex1
+
+SELECT *
+FROM 
+    (
+    SELECT 
+    user_id
+    ,item_id
+    ,event_time
+    , ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY event_time DESC) AS VIEW_NUM
+    FROM dsv1069.view_item_events 
+    ) recent_views
+JOIN dsv1069.users
+ON recent_views.user_id = users.id
+JOIN dsv1069.items
+ON recent_views.item_id = items.id 
+*/
+/*
+Exercise 3: Clean up your columns. The goal of all this is to return all of the information we’ll
+need to send users an email about the item they viewed more recently. Clean up this query
+outline from the outline in EX2 and pull only the columns you need. Make sure they are named
+appropriately so that another human can read and understand their contents.
+Starter Code: Code from Ex2
+LIMPIAR LA TABLA CON LO QUE REALMENTE NECESITAMOS
+
+SELECT 
+    users.id              AS user_id
+    ,users.email_address  AS email
+    ,items.id             AS item_id
+    ,items.name           AS item_name
+    ,items.category       AS item_category
+FROM 
+    (
+    SELECT 
+    user_id
+    ,item_id
+    ,event_time
+    , ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY event_time DESC) AS view_number
+    FROM dsv1069.view_item_events 
+    ) recent_views
+JOIN dsv1069.users
+ON recent_views.user_id = users.id
+
+JOIN dsv1069.items
+ON recent_views.item_id = items.id 
+WHERE 
+    view_number = 1
+*/
+/*
+Exercise 4: Consider any edge cases. If we sent an email to everyone in the results of this
+query, what would we want to filter out. Add in any extra filtering that you think would make this
+email better. For example should we include deleted users? Should we send this email to users
+who already ordered the item they viewed most recently
+
+SELECT 
+    COALESCE (users.parent_user_id , users.id)        AS user_id
+    ,users.email_address                              AS email
+    ,items.id                                         AS item_id
+    ,items.name                                       AS item_name
+    ,items.category                                   AS item_category
+FROM 
+    (
+    SELECT 
+    user_id
+    ,item_id
+    ,event_time
+    , ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY event_time DESC) AS view_number
+    FROM dsv1069.view_item_events 
+    WHERE 
+      event_time >= '2017-01-01'
+    ) recent_views
+JOIN dsv1069.users
+ON recent_views.user_id = users.id
+
+JOIN dsv1069.items
+ON recent_views.item_id = items.id 
+
+LEFT OUTER JOIN 
+    dsv1069.orders
+    ON  recent_views.item_id = orders.item_id 
+AND recent_views.user_id = orders.user_id 
+WHERE 
+    view_number = 1
+AND 
+    users.deleted_at IS NOT NULL 
+AND   
+    orders.item_id IS NULL
+*/
+
+-- Code 5
+--We are running an experiment at an item-level, which means all users who visit will see the same page, 
+--but the layout of different item pages may differ.
+--Compare this table to the assignment events we captured for user_level_testing.
+--Does this table have everything you need to compute metrics like 30-day view-binary?
+
+SELECT 
+  * 
+FROM 
+    --dsv1069.final_assignments
+    --dsv1069.final_assignments_qa
+    dsv1069.events
+--R: No, we need modify to get that information.
+
+holder of the appropriate data type. 
+ 
+    SELECT   
+    item_id 
+    ,test_a 
+    ,( 
+      CASE WHEN test_a IS NOT NULL  
+            THEN 'test_a'  
+            ELSE NULL  
+            END 
+    ) test_number 
+    ,( 
+      CASE WHEN test_a IS NOT NULL  
+            THEN NOW()  
+            ELSE NULL  
+            END 
+    ) event_time 
+    FROM  
+      dsv1069.final_assignments_qa 
+    UNION 
+    SELECT   
+    item_id 
+    ,test_b 
+    ,( 
+      CASE WHEN test_b IS NOT NULL  
+            THEN 'test_b'  
+            ELSE NULL  
+            END 
+    ) test_number 
+    ,( 
+      CASE WHEN test_b IS NOT NULL  
+            THEN NOW()  
+            ELSE NULL  
+            END 
+    ) event_time 
+    FROM  
+      dsv1069.final_assignments_qa 
+    UNION 
+    SELECT   
+    item_id 
+    ,test_c 
+    ,( 
+      CASE WHEN test_c IS NOT NULL  
+            THEN 'test_c'  
+            ELSE NULL  
+            END 
+    ) test_number 
+    ,( 
+      CASE WHEN test_c IS NOT NULL  
+            THEN NOW()  
+            ELSE NULL  
+            END 
+    ) event_time 
+    FROM  
+      dsv1069.final_assignments_qa 
+    UNION 
+    SELECT   
+    item_id 
+    ,test_d 
+    ,( 
+      CASE WHEN test_d IS NOT NULL  
+            THEN 'test_d'  
+            ELSE NULL  
+            END 
+    ) test_number 
+    ,( 
+      CASE WHEN test_d IS NOT NULL  
+            THEN NOW()  
+            ELSE NULL  
+            END 
+    ) event_time 
+    FROM  
+      dsv1069.final_assignments_qa 
+    UNION 
+    SELECT   
+    item_id 
+    ,test_e 
+    ,( 
+      CASE WHEN test_e IS NOT NULL  
+            THEN 'test_e'  
+            ELSE NULL  
+            END 
+    ) test_number 
+    ,( 
+      CASE WHEN test_e IS NOT NULL  
+            THEN NOW()  
+            ELSE NULL  
+            END 
+    ) event_time 
+    FROM  
+      dsv1069.final_assignments_qa 
+    UNION 
+    SELECT   
+    item_id 
+    ,test_f 
+    ,( 
+      CASE WHEN test_f IS NOT NULL  
+            THEN 'test_f'  
+            ELSE NULL  
+            END 
+    ) test_number 
+    ,( 
+      CASE WHEN test_f IS NOT NULL  
+            THEN NOW()  
+            ELSE NULL  
+            END 
+    ) event_time 
+    FROM  
+      dsv1069.final_assignments_qa 
+   */  ------------------------------------- 
+/* -- Use this table to  -- compute order_binary for the 30 day window after the test_start_date -- for the test named item_test_2 
+*/ 
+/* 
+SELECT  
+test_assignment 
+,COUNT(item_id) 
+,SUM(mayor30) 
+FROM 
+      ( 
+      SELECT  
+          test_events.item_id 
+          ,test_events.test_assignment 
+          ,test_events.created_at 
+          ,test_events.test_number 
+          ,test_events.test_start_date 
+          ,COUNT(invoice_id) as orders 
+          ,MAX(CASE WHEN (created_at > test_events.test_start_date 
+                    AND DATE_PART('day', created_at-test_start_date) <= 30) 
+                    THEN 1  
+                    ELSE 0  
+                    END) mayor30 
+      FROM 
+            ( 
+            SELECT  
+            dsv1069.final_assignments.item_id  
+            ,test_assignment  
+            ,test_number  
+            ,test_start_date 
+            ,invoice_id 
+            ,created_at 
+            FROM dsv1069.final_assignments 
+            LEFT JOIN  
+            dsv1069.orders  
+            ON  
+            orders.item_id = final_assignments.item_id  
+            WHERE test_number = 'item_test_2' 
+            ) test_events  
+      GROUP BY  
+          test_events.item_id 
+          ,test_events.test_assignment 
+          ,test_events.created_at 
+          ,test_events.test_number 
+          ,test_events.test_start_date 
+      ) order_binary 
+GROUP BY 
+test_assignment  
+*/ 
+ 
+ ------------------------------------- 
+/* -- Use this table to  -- compute view_binary for the 30 day window after the test_start_date -- for the test named item_test_2 
+ 
+SELECT  
+ * 
+FROM  
+  dsv1069.final_assignments 
+  */ 
+ 
+SELECT test_assignment, 
+      SUM(view_binary) AS views_binary_30, 
+      count(distinct item_id) AS items, 
+     CAST(100*SUM(view_binary)/COUNT(item_id) AS FLOAT) AS viewed_percent, 
+      SUM(events)/COUNT(item_id) AS average_views_per_item 
+FROM ( 
+SELECT test_events.item_id, 
+       test_events.test_assignment, 
+       test_events.test_number, 
+       test_events.test_date, 
+       count(event_id) as events, 
+       MAX(CASE 
+               WHEN (event_time > test_events.test_date 
+                     AND DATE_PART('day', event_time-test_date) <= 30) THEN 1 
+               ELSE 0 
+           END) AS view_binary 
+FROM 
+  (SELECT assignment.item_id AS item_id, 
+          test_assignment, 
+          test_number, 
+          test_start_date AS test_date, 
+          event_time, 
+          event_id 
+   FROM dsv1069.final_assignments assignment 
+   LEFT JOIN 
+       (SELECT event_time,  
+              event_id, 
+               CASE 
+                   WHEN parameter_name = 'item_id' then cast (parameter_value AS float) 
+                   ELSE null 
+               END AS item_id 
+      FROM dsv1069.events 
+      WHERE event_name = 'view_item' ) AS views 
+     ON assignment.item_id =views.item_id 
+     WHERE test_number = 'item_test_2'  
+     ) AS test_events 
+   GROUP BY test_events.item_id, 
+         test_events.test_assignment, 
+         test_events.test_number, 
+       test_events.test_date 
+         ) AS views_binary 
+GROUP BY test_assignment, 
+  test_date
+
+// Get in: https://app.mode.com/home/myspacework_/search
+
