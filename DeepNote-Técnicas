@@ -1,0 +1,160 @@
+// Importacion de librerías
+import empiricaldist
+import janitor
+import matplotlib.pyplot as plt
+import numpy as np
+import palmerpenguins
+import pandas as pd
+import scipy.stats
+import seaborn as sns
+import sklearn.metrics
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+import statsmodels.stats as ss
+import session_info
+
+// Establecer apariencia general de los gráficos
+%matplotlib inline
+sns.set_style(style='whitegrid')
+sns.set_context(context='notebook')
+plt.rcParams['figure.figsize'] = (11, 9.4)
+
+penguin_color = {
+    'Adelie': '#ff6602ff',
+    'Gentoo': '#0f7175ff',
+    'Chinstrap': '#c65dc9ff'
+}
+
+// Cargar los datos. Utilizando el paquete palmerpenguins (Datos crudos)
+raw_penguins_df =palmerpenguins.load_penguins_raw()
+raw_penguins_df
+
+// Datos previamente procesados
+preprocess_penguins_df = palmerpenguins.load_penguins()
+preprocess_penguins_df
+
+// Utilizando los conjuntos de datos de seaborn
+sns.load_dataset('penguins')
+
+// Utilizando la interfaz de Deepnote
+// Conjunto de datos crudos. https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/inst/extdata/penguins_raw.csv
+// Conjunto de datos previamente procesados. https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/inst/extdata/penguins.csv
+pd.read_csv('penguins.csv')
+
+// Colecta y validación de datos
+// ¿Qué tipo de dato son las variables del conjunto de datos?
+preprocess_penguins_df.dtypes
+
+// ¿Cuántas variables de cada tipo de dato tenemos en el conjunto de datos?
+(
+    preprocess_penguins_df
+    .dtypes
+    .value_counts()
+)
+
+// ¿Cuántas variables y observaciones tenemos en el conjunto de datos?
+preprocess_penguins_df.shape
+
+// ¿Existen valores nulos explícitos en el conjunto de datos?
+(
+    preprocess_penguins_df
+    .isnull()
+    .any()
+)
+
+// En caso de tener observaciones con valores nulos, ¿cuántas tenemos por cada variable?
+(
+    preprocess_penguins_df
+    .isnull()
+    .sum()
+)
+
+// ¿Cuántos valores nulos tenemos en total en el conjunto de datos?
+(
+    preprocess_penguins_df
+    .isnull()
+    .sum()
+    .sum()
+)
+
+// ¿Cuál es la proporción de valores nulos por cada variable?
+(
+    preprocess_penguins_df
+    .isnull()
+    .melt()
+     
+)
+
+// Conteos y proporciones
+// ¿Qué estadísticos describen el conjunto de datos?
+// Todas las variables
+preprocess_penguins_df.describe()
+
+// Solo las variables numéricas
+preprocess_penguins_df.describe(include=[np.number])
+
+// Solo variables categóricas - 1
+preprocess_penguins_df.describe(include=[np.object])
+
+// ¿Cómo visualizar los conteos?
+// Usando Pandas
+(
+    preprocess_penguins_df
+    .species
+    .value_counts()
+)
+
+// ¿Cómo visualizar las proporciones?
+(
+    preprocess_penguins_df
+    .add_column('x', ' ')
+    .pipe (
+        lambda df: (
+            sns.displot(
+                data = df,
+                x = 'x',
+                hue = 'species',
+                multiple = 'fill'
+            )
+        )
+    )
+)
+
+// Medidas de tendencia central
+// Media o promedio
+preprocess_penguins_df.mean()
+
+// Mediana
+preprocess_penguins_df.median()
+
+// Moda
+preprocess_penguins_df.mode()
+
+preprocess_penguins_df.describe(include= object)
+
+// Medidas de dispersión
+// ¿Cuál es el valor máximo de las variables?
+preprocess_penguins_df.max(numeric_only=True)
+
+// ¿Cuál es el valor mínimo de las variables?
+preprocess_penguins_df.min(numeric_only=True)
+
+// ¿Cuál es el rango de las variables?
+preprocess_penguins_df.max(numeric_only=True) - preprocess_penguins_df.min(numeric_only=True)
+
+// ¿Cuál es la desviación estándar de las variables?
+preprocess_penguins_df.std()
+
+// Información de sesión
+session_info.show()
+
+// Get it: https://deepnote.com/workspace/aaa-936b-fbdc99b2-6f5b-41e8-b4a5-1aed1fad9d3b/project/Curso-Analisis-Datos-Duplicate-32f8e417-c8bd-486c-9e4d-7e1b0f720458/notebook/conociendo-nuestros-datos-f9a7163cd7a744a68d8f2d434ca1ae08
+
+
+
+
+
+
+
+
+
