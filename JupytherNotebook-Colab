@@ -1,0 +1,87 @@
+# Un método bastante usado es 'apend()' el cual nos permite agregar elementos a una lista
+# Si te olvidaste de la bebida
+
+lista_super.append("bebida")
+
+#Pandas es la librería básica para la manipulación y análisis de datos
+import pandas as pd
+
+#Numpy es la biblioteca para crear vectores y matrices, además de un conjunto grande de funciones matemáticas
+import numpy as np
+
+#Seaborn es una librería que usamos para graficar
+import seaborn as sns
+
+#Statsmodels es la biblioteca para realizar modelos
+import statsmodels.formula.api as smf
+
+// Trabajaremos con el dataset 'nations', el cual contiene información sobre diferentes atributos de desarrollo humano en 194 países, recolectados por las Naciones Unidas.
+df_nations = pd.read_csv("https://raw.githubusercontent.com/DireccionAcademicaADL/Nations-DB/main/nations.csv", encoding="ISO-8859-1")
+df_nations
+
+# El método 'head()' nos permite ver "la cabecera" del dataset
+df_nations.head()
+
+// Ultimos datos de la tabla
+df_nations.tail()
+
+df_nations.drop(columns=["Unnamed: 0"], inplace = True)
+df_nations.head()
+df_nations.columns
+df_nations["region"]
+df_nations["country"]
+df_nations["gdp_pesos2021"] = df_nations["gdp"]*850
+df_nations.head()
+
+// # Comenzaremos con crear un histograma que nos muestre la distribución del índice gini
+sns.displot(df_nations["gini"], kind="hist")
+
+// import matplotlib.pyplot as plt
+sns.displot(df_nations["gini"], kind="hist")
+plt.axvline(df_nations["gini"].mean(), color = "tomato")
+
+#Graficamos
+df_euafr = df_nations.loc[df_nations["region"].isin(["Europe","Africa"])]
+sns.barplot(data=df_euafr, x="region", y="chldmort")
+
+# Otro gráfico de barras: Alfabetismo promedio entre Americas y el resto del mundo
+# Filtrar los datos para las Americas y el resto del mundo
+df_americas = df_nations[df_nations['region'] == 'Americas']
+df_resto_mundo = df_nations[df_nations['region'] != 'Americas']
+
+# Calcular el alfabetismo promedio para cada grupo
+alfabetismo_promedio_americas = df_americas['literacy'].mean()
+alfabetismo_promedio_resto_mundo = df_resto_mundo['literacy'].mean()
+
+# Crear el gráfico de barras utilizando sns.barplot
+sns.barplot(x=['Americas', 'Rest of the world'], y=[alfabetismo_promedio_americas, alfabetismo_promedio_resto_mundo])
+
+# Ahora usando gráfico Boxplot para observar la distribución de la escolaridad por región
+sns.boxplot(x=df_nations["region"], y=df_nations["school"])
+
+#Otra forma de observar la información es a traves de los diagramas de dispersión, pero para usar estos necesitamos eliminar datos perdidos en el dataset.
+df_limpia = df_nations.dropna()
+
+df_limpia
+sns.scatterplot(x=df_limpia["school"], y=df_limpia["literacy"])
+
+corr = df_nations.corr()
+
+plt.rcParams["figure.figsize"] =(8,8)
+sns.heatmap(corr, cmap="Greens", annot=True)
+
+// # ¿Cual es la relación CO2 y el GDP?
+modelo1 = smf.ols("gdp ~ co2", data=df_limpia)
+modelo1 = modelo1.fit()
+modelo1.summary()
+
+// Get in: https://colab.research.google.com/drive/138pFVy7UQhNozQfjCKgM9bA4FfLzngLk?usp=sharing
+
+
+
+
+
+
+
+
+
